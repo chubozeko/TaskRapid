@@ -47,12 +47,15 @@ fun InitLoginCredentials(sharedPrefs: SharedPreferences) {
     // User 1:
     editor.putString(profile.generateUsernameKey("admin"),"admin")
     editor.putString(profile.generatePasswordKey("admin"),"Admin12345")
+    editor.putString(profile.generateEmailKey("admin"),"admin@posti.fi")
     // User 2:
     editor.putString(profile.generateUsernameKey("chubo"),"chubo")
-    editor.putString(profile.generatePasswordKey("chubo"),"Zeko21")
+    editor.putString(profile.generatePasswordKey("chubo"),"qwerty123")
+    editor.putString(profile.generateEmailKey("chubo"),"czeko@mail.fi")
     // User 3:
     editor.putString(profile.generateUsernameKey("temp"),"temp")
     editor.putString(profile.generatePasswordKey("temp"),"Oulu2022")
+    editor.putString(profile.generateEmailKey("temp"),"temp@mail.fi")
     editor.commit()
 }
 

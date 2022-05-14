@@ -1,5 +1,6 @@
 package com.chandistudios.taskrapid.ui.task.add
 
+import android.widget.DatePicker
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,8 +13,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,14 +27,25 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chandistudios.taskrapid.TaskRapidAppState
 import com.chandistudios.taskrapid.data.entity.Task
+import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.ui.login.Login
 import com.google.accompanist.insets.systemBarsPadding
+import java.util.*
+import kotlin.random.Random
 
 @Composable
 fun AddTask(
     onBackPress: () -> Unit
 ) {
     Surface {
+        val name = rememberSaveable { mutableStateOf("") }
+        val description = rememberSaveable { mutableStateOf("") }
+        val icon = rememberSaveable { mutableStateOf("") }
+        val date = rememberSaveable { mutableStateOf("") }
+        val time = rememberSaveable { mutableStateOf("") }
+        val locationX = rememberSaveable { mutableStateOf("") }
+        val locationY = rememberSaveable { mutableStateOf("") }
+        val taskType = rememberSaveable { mutableStateOf("") }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -44,59 +60,120 @@ fun AddTask(
                         contentDescription = null
                     )
                 }
-                Text(text = "Add New Task")
+                Text(text = "Add New Task: " + name.value)
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.padding(16.dp)
             ) {
-                Text(
-                    text = "Task Description",
-                    maxLines = 1,
-                    style = MaterialTheme.typography.body1,
-//                    modifier = Modifier.constrainAs(taskName) {
-//                        linkTo(
-//                            start = parent.start,
-//                            end = icon.start,
-//                            startMargin = 24.dp,
-//                            endMargin = 16.dp,
-//                            bias = 0f
-//                        )
-//                        top.linkTo(parent.top, margin = 10.dp)
-////                width = Dimension.preferredWrapContent
-//                    }
-                )
-                Spacer(modifier = Modifier.height(10.dp))
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text(text = "Recipient account")},
+                    value = name.value,
+                    onValueChange = { data -> name.value = data },
+                    label = { Text(text = "Task Name")},
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-                Row{
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = { Text(text = "Date")},
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = { Text(text = "Amount")},
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.fillMaxWidth().size(55.dp)
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = description.value,
+                    onValueChange = { data -> description.value = data },
+                    label = { Text(text = "Task Description")},
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = false,
+                    maxLines = 2
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row (
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
                 ) {
-                    Text("Save payment")
+                    Text(
+                        text = "Select Task Icon: ",
+                        maxLines = 1,
+                        style = MaterialTheme.typography.body1,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Icon")
+                        Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "Default")
+                    }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row (
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.padding(8.dp)) {
+                        Text(text = "Task Date")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.padding(8.dp)) {
+                        Text(text = "Task Time")
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row (
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                ) {
+                    Text(
+                        text = "Location: ",
+                        maxLines = 1,
+                        style = MaterialTheme.typography.body1,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+                        Text(text = "Select location...")
+                    }
+                }
+//                Text(
+//                    text = "Lat: " + locationX.value + ", Long: " + locationY.value,
+//                    maxLines = 1,
+//                    style = MaterialTheme.typography.body1,
+//                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                ) {
+                    Text(
+                        text = "Task Stage: ",
+                        maxLines = 1,
+                        style = MaterialTheme.typography.body1,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    /*TODO: Use a dropdown menu for Task Type [HW2]*/
+                    OutlinedTextField(
+                        value = taskType.value,
+                        onValueChange = { data -> taskType.value = data },
+                        placeholder = { Text(text = "Upcoming/Complete")},
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 2
+                    )
+                }
+                /*TODO: Add calendar event options [HW2]*/
+                /*TODO: Add reminder notification options [HW3]*/
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = onBackPress, //{ /*TODO: HW2*/ },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(55.dp)
+                ) {
+                    Text("Save Task")
+                }
+
+//                Spacer(modifier = Modifier.width(8.dp))
             }
         }
     }
 }
+

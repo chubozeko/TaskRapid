@@ -3,6 +3,7 @@ package com.chandistudios.taskrapid.ui.home
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -52,7 +53,7 @@ fun HomeContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(route = "addtask") },
-                contentColor = Color.Blue,
+                contentColor = MaterialTheme.colors.primaryVariant,
                 modifier = Modifier.padding(all = 20.dp)
             ) {
                 Icon(
@@ -67,10 +68,11 @@ fun HomeContent(
                 .systemBarsPadding()
                 .fillMaxWidth()
         ) {
-            val appBarColor = MaterialTheme.colors.secondary.copy(alpha = 0.87f)
+            val appBarColor = MaterialTheme.colors.primary.copy(alpha = 0.87f)
 
             HomeAppBar(
                 backgroundColor = appBarColor,
+                navController = navController,
             )
 
             TaskCategoryTabs(
@@ -88,13 +90,14 @@ fun HomeContent(
 
 @Composable
 private fun HomeAppBar(
-    backgroundColor: Color
+    backgroundColor: Color,
+    navController: NavController,
 ) {
     TopAppBar(
         title = {
             Text(
                 text = stringResource(R.string.app_name),
-                color = MaterialTheme.colors.primary,
+                color = MaterialTheme.colors.primaryVariant,
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .heightIn(max = 24.dp)
@@ -102,12 +105,14 @@ private fun HomeAppBar(
         },
         backgroundColor = backgroundColor,
         actions = {
+            // Search Tasks
 //            IconButton( onClick = {} ) {
-//                Icon(imageVector = Icons.Filled.Search, contentDescription = stringResource(R.string.search))
+//                Icon(imageVector = Icons.Filled.Search, contentDescription = "Search for Task")
 //            }
-//            IconButton( onClick = {} ) {
-//                Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = stringResource(R.string.account))
-//            }
+            // View Profile
+            IconButton( onClick = { navController.navigate(route = "viewprofile") } ) {
+                Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "View Profile")
+            }
         }
     )
 }
@@ -148,14 +153,14 @@ private fun ChoiceChipContent(
 ) {
     Surface(
         color = when {
-            selected -> Color.White /*MaterialTheme.colors.secondary.copy(alpha = 0.87f)*/
+            selected -> MaterialTheme.colors.secondary.copy(alpha = 0.95f)
             else -> MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
         },
         contentColor = when {
-            selected -> Color.Black.copy(alpha = 0.5f)
+            selected -> MaterialTheme.colors.primaryVariant.copy(alpha = 0.75f)
             else -> MaterialTheme.colors.onSurface
         },
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.large,
         modifier = modifier
     ) {
         Text(

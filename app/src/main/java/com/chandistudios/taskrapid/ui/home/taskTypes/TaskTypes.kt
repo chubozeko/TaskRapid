@@ -71,6 +71,7 @@ private fun TaskListItem(
             text = task.taskName,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.primaryVariant,
             modifier = Modifier.constrainAs(taskName) {
                 linkTo(
                     start = parent.start,
@@ -88,6 +89,7 @@ private fun TaskListItem(
             text = task.taskType,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle2,
+            color = MaterialTheme.colors.primary,
             modifier = Modifier.constrainAs(taskType) {
                 linkTo(
                     start = parent.start,
