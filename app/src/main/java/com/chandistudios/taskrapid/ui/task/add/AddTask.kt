@@ -179,7 +179,7 @@ fun AddTask(
                                     taskName = name.value,
                                     taskDescription = description.value,
                                     taskIcon = 0,
-                                    taskDate = Date().time.toString(), // date.value
+                                    taskDate = Date().time, // date.value
                                     taskTime = Date().time.toString(),
                                     locationX = locationX.value,
                                     locationY = locationY.value,

@@ -15,6 +15,7 @@ object Graph {
         private set
 
     lateinit var appContext: Context
+
     val taskRepository by lazy {
         TaskRepository(
             taskDao = database.taskDao()
@@ -28,6 +29,7 @@ object Graph {
     }
 
     fun provide(context: Context) {
+        appContext = context
         database = Room.databaseBuilder(context, TaskRapidDatabase::class.java, "task_rapid.db")
             .fallbackToDestructiveMigration()   // it deletes everything and rebuilds the db
             .build()                            // NB! DO NOT use in a production app!

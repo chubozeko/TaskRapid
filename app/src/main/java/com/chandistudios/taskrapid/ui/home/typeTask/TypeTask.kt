@@ -113,7 +113,7 @@ private fun TaskListItem(
         // date
         Text(
             text = when {
-                task.taskDate != null -> { task.taskDate } // .formatToString()
+                true -> { task.taskDate.toDateString() }
                 else -> Date().formatToString()
             },
             maxLines = 1,
@@ -154,10 +154,10 @@ private fun TaskListItem(
     }
 }
 
-private fun Date.formatToString(): String {
+fun Date.formatToString(): String {
     return SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(this)
 }
 
-private fun Long.toDateString(): String {
+fun Long.toDateString(): String {
     return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
 }
