@@ -8,6 +8,7 @@ import com.chandistudios.taskrapid.TaskRapidAppState
 import com.chandistudios.taskrapid.rememberTaskRapidAppState
 import com.chandistudios.taskrapid.ui.home.Home
 import com.chandistudios.taskrapid.ui.login.Login
+import com.chandistudios.taskrapid.ui.maps.LocationMap
 import com.chandistudios.taskrapid.ui.profile.EditProfile
 import com.chandistudios.taskrapid.ui.profile.ViewProfile
 import com.chandistudios.taskrapid.ui.signup.SignUp
@@ -43,7 +44,7 @@ fun TaskRapidApp(
             Home(navController = appState.navController)
         }
         composable(route = "addtask") {
-            AddTask(onBackPress = appState::navigateBack)
+            AddTask(onBackPress = appState::navigateBack, navController = appState.navController,)
         }
         composable(route = "edittask") {
             // TODO: HW2
@@ -67,6 +68,12 @@ fun TaskRapidApp(
                 sharedPrefs = sharedPrefsCredentials
             )
         }
-
+        composable(route = "map") {
+            LocationMap(
+                navController = appState.navController,
+//                onBackPress = appState::navigateBack,
+//                sharedPrefs = sharedPrefsCredentials
+            )
+        }
     }
 }
