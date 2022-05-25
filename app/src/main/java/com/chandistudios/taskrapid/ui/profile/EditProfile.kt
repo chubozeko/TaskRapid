@@ -291,15 +291,15 @@ fun EditProfile(
                         // save profile changes
                         var editor = sharedPrefs.edit()
                         editor.putString(
-                            profile.generateNameKey(currentUser.toString()),
+                            profile.generateNameKey(currentUser),
                             name.value
                         )
                         editor.putString(
-                            profile.generateSurnameKey(currentUser.toString()),
+                            profile.generateSurnameKey(currentUser),
                             surname.value
                         )
                         editor.putString(
-                            profile.generatePhoneNumberKey(currentUser.toString()),
+                            profile.generatePhoneNumberKey(currentUser),
                             phone_number.value
                         )
                         // check if the old_password was entered and is equal to the saved old_password

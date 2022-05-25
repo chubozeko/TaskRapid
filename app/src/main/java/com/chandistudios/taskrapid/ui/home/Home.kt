@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -17,7 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.R
-import com.chandistudios.taskrapid.ui.home.taskTypes.TaskTypes
+import com.chandistudios.taskrapid.ui.home.typeTask.TypeTask
 import com.google.accompanist.insets.systemBarsPadding
 
 @Composable
@@ -27,14 +28,14 @@ fun Home(
 ) {
     val viewState by viewModel.state.collectAsState()
 
-    val selectedTaskCategory = viewState.selectedTaskType
+    val selectedTaskType = viewState.selectedTaskType
 
-    if (viewState.taskCategories.isNotEmpty() && selectedTaskCategory != null) {
+    if (viewState.taskTypes.isNotEmpty() && selectedTaskType != null) {
         Surface(modifier = Modifier.fillMaxSize()) {
             HomeContent(
-                selectedTaskType = selectedTaskCategory,
-                taskTypes = viewState.taskCategories,
-                onTaskTypeSelected = viewModel::onCategorySelected,
+                selectedTaskType = selectedTaskType,
+                taskTypes = viewState.taskTypes,
+                onTaskTypeSelected = viewModel::onTypeSelected,
                 navController = navController
             )
         }
@@ -75,13 +76,14 @@ fun HomeContent(
                 navController = navController,
             )
 
-            TaskCategoryTabs(
-                taskCategories = taskTypes,
-                selectedTaskCategory = selectedTaskType,
-                onTaskCategorySelected = onTaskTypeSelected,
+            TaskTypeTabs(
+                taskTypes = taskTypes,
+                selectedTaskType = selectedTaskType,
+                onTaskTypeSelected = onTaskTypeSelected,
             )
 
-            TaskTypes (
+            TypeTask (
+                taskTypeId = selectedTaskType.id,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -106,9 +108,9 @@ private fun HomeAppBar(
         backgroundColor = backgroundColor,
         actions = {
             // Search Tasks
-//            IconButton( onClick = {} ) {
-//                Icon(imageVector = Icons.Filled.Search, contentDescription = "Search for Task")
-//            }
+            IconButton( onClick = { /* TODO (HW4)*/ } ) {
+                Icon(imageVector = Icons.Filled.Search, contentDescription = "Search for Task")
+            }
             // View Profile
             IconButton( onClick = { navController.navigate(route = "viewprofile") } ) {
                 Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "View Profile")
@@ -118,25 +120,25 @@ private fun HomeAppBar(
 }
 
 @Composable
-private fun TaskCategoryTabs(
-    taskCategories: List<TaskType>,
-    selectedTaskCategory: TaskType,
-    onTaskCategorySelected: (TaskType) -> kotlin.Unit
+private fun TaskTypeTabs(
+    taskTypes: List<TaskType>,
+    selectedTaskType: TaskType,
+    onTaskTypeSelected: (TaskType) -> kotlin.Unit
 ) {
-    val selectedIndex = taskCategories.indexOfFirst { it == selectedTaskCategory }
+    val selectedIndex = taskTypes.indexOfFirst { it == selectedTaskType }
     ScrollableTabRow(
         selectedTabIndex = selectedIndex,
         edgePadding = 24.dp,
         indicator = emptyTabIndicator,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        taskCategories.forEachIndexed { index, category ->
+        taskTypes.forEachIndexed { index, type ->
             Tab(
                 selected = index == selectedIndex,
-                onClick = { onTaskCategorySelected(category) }
+                onClick = { onTaskTypeSelected(type) }
             ) {
                 ChoiceChipContent(
-                    text = category.name,
+                    text = type.name,
                     selected = index == selectedIndex,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 16.dp)
                 )

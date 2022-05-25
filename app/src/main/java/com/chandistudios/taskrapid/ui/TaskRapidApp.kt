@@ -12,6 +12,7 @@ import com.chandistudios.taskrapid.ui.profile.EditProfile
 import com.chandistudios.taskrapid.ui.profile.ViewProfile
 import com.chandistudios.taskrapid.ui.signup.SignUp
 import com.chandistudios.taskrapid.ui.task.add.AddTask
+import com.chandistudios.taskrapid.ui.task.add.AddTaskViewModel
 import com.chandistudios.taskrapid.ui.task.edit.EditTask
 import com.chandistudios.taskrapid.ui.task.view.ViewTask
 

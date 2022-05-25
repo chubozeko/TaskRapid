@@ -1,11 +1,13 @@
 package com.chandistudios.taskrapid.util
 
 class UserProfile {
-    // The user's profile details would be stored in SharedPreferences using a combination of the
-    //      USERNAME_PREFIX & username, with the relevant profile property suffix
-    //          => key = USERNAME_PREFIX + <username> + <PROPERTY_SUFFIX>
-    //          e.g. to retrieve the surname of the user 'admin': key = user_admin_sname
-    // USER PROFILE PROPERTIES: name, surname, email, phone_number, username, password
+
+    /** The user's profile details would be stored in SharedPreferences using a combination of the
+    *      USERNAME_PREFIX & username, with the relevant profile property suffix
+    *          => key = USERNAME_PREFIX + <username> + <PROPERTY_SUFFIX>
+    *          e.g. to retrieve the surname of the user 'admin': key = user_admin_sname
+    *   USER PROFILE PROPERTIES: name, surname, email, phone_number, username, password
+    */
     val USER_PREFIX: String = "user_"               // e.g. key: user_admin
     val USERNAME_SUFFIX: String = "_usern"          // e.g. key: user_admin_usern
     val PASSWORD_SUFFIX: String = "_pw"             // e.g. key: user_admin_pw

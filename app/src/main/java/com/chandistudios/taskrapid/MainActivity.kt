@@ -62,7 +62,5 @@ fun InitLoginCredentials(sharedPrefs: SharedPreferences) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    TaskRapidTheme {
-
-    }
+    TaskRapidTheme {}
 }

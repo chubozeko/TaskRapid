@@ -1,4 +1,4 @@
-package com.chandistudios.taskrapid.ui.home.taskTypes
+package com.chandistudios.taskrapid.ui.home.typeTask
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,42 +9,48 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.chandistudios.taskrapid.data.entity.Task
+import com.chandistudios.taskrapid.data.entity.TaskType
+import com.chandistudios.taskrapid.data.room.TaskWithType
+import com.chandistudios.taskrapid.util.viewModelProviderFactoryOf
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun TaskTypes (
+fun TypeTask (
+    taskTypeId: Long,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: TaskTypeViewModel = viewModel()
+    val viewModel: TypeTaskViewModel = viewModel(
+        key = "type_list_$taskTypeId",
+        factory = viewModelProviderFactoryOf { TypeTaskViewModel(taskTypeId) }
+    )
     val viewState by viewModel.state.collectAsState()
 
     Column(modifier = modifier) {
-        TaskList(list = viewState.tasks)
+        TaskList(taskList = viewState.tasks)
     }
 }
 
 @Composable
 private fun TaskList(
-    list: List<Task>
+    taskList: List<TaskWithType>,
 ) {
-    // LazyColumn -> loads items once they are need (i.e. when they are in view)
+    // LazyColumn -> loads items when they are needed (i.e. in view)
     LazyColumn(
         contentPadding = PaddingValues(0.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        items(list) { item ->
+        items(taskList) { item ->
             TaskListItem(
-                task = item,
-                onClick = {  },
+                task = item.task,
+                type = item.type,
+                onClick = { /**TODO: viewtask */ },
                 modifier = Modifier.fillParentMaxWidth(),
             )
         }
@@ -54,6 +60,7 @@ private fun TaskList(
 @Composable
 private fun TaskListItem(
     task: Task,
+    type: TaskType,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -81,12 +88,12 @@ private fun TaskListItem(
                     bias = 0f
                 )
                 top.linkTo(parent.top, margin = 10.dp)
-//                width = Dimension.preferredWrapContent
+                width = Dimension.preferredWrapContent
             }
         )
         // task type
         Text(
-            text = task.taskType,
+            text = type.name,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle2,
             color = MaterialTheme.colors.primary,
@@ -106,7 +113,7 @@ private fun TaskListItem(
         // date
         Text(
             text = when {
-                task.taskDate != null -> { task.taskDate.formatToString() }
+                task.taskDate != null -> { task.taskDate } // .formatToString()
                 else -> Date().formatToString()
             },
             maxLines = 1,
@@ -115,19 +122,19 @@ private fun TaskListItem(
             modifier = Modifier
                 .padding(16.dp)
                 .constrainAs(date) {
-//                linkTo(
-//                    start = taskType.end,
-//                    end = parent.start,
-//                    startMargin = 8.dp,
-//                    endMargin = 16.dp,
-//                    bias = 0f
-//                )
+                linkTo(
+                    start = taskType.end,
+                    end = parent.start,
+                    startMargin = 8.dp,
+                    endMargin = 16.dp,
+                    bias = 0f
+                )
                     top.linkTo(parent.top, 10.dp)
                     bottom.linkTo(parent.bottom, 10.dp)
                     end.linkTo(parent.end)
-//                centerVerticallyTo(taskType)
-//                top.linkTo(taskName.bottom, 6.dp)
-//                bottom.linkTo(parent.bottom, 10.dp)
+                centerVerticallyTo(taskType)
+                top.linkTo(taskName.bottom, 6.dp)
+                bottom.linkTo(parent.bottom, 10.dp)
                 }
         )
         // icon
@@ -149,4 +156,8 @@ private fun TaskListItem(
 
 private fun Date.formatToString(): String {
     return SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(this)
+}
+
+private fun Long.toDateString(): String {
+    return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
 }

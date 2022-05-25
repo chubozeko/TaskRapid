@@ -244,7 +244,7 @@ fun ViewProfile(
                 // Sign Out
                 Button(
                     onClick = {
-                        // TODO: Add "Are you sure?" pop-up dialog
+                        // TODO (HW4): Add "Are you sure?" pop-up dialog
                         // set currentUser to "null"
                         var editor = sharedPrefs.edit()
                         editor.putString("currentUser","")
@@ -253,7 +253,6 @@ fun ViewProfile(
                         Toast.makeText(context, "You have successfully SIGNED OUT!", Toast.LENGTH_SHORT).show()
                         // Return to Login screen
                         navController.popBackStack("login", inclusive = false)
-//                        navController.navigate(route = "login")
                     },
                     enabled = true,
                     shape = MaterialTheme.shapes.medium,

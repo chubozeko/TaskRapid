@@ -93,7 +93,6 @@ fun Login(
             )
             Spacer(modifier = Modifier.height(18.dp))
             Button(
-//                onClick = { navController.navigate("home") },
                 onClick = { CheckCredentials(context, navController, sharedPrefsCredentials, username.value, password.value) },
                 enabled = true,
                 modifier = Modifier.fillMaxWidth(),
@@ -137,6 +136,5 @@ fun CheckCredentials(context: Context, navController: NavController, sharedPrefs
     } else {
         println("Invalid username!")
         Toast.makeText(context,"Invalid username!",Toast.LENGTH_SHORT).show()
-//        Toast.makeText(null, "Invalid username!", Toast.LENGTH_SHORT)
     }
 }

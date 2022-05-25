@@ -1,7 +1,8 @@
 package com.chandistudios.taskrapid.ui.task.add
 
 import android.widget.DatePicker
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,32 +12,40 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chandistudios.taskrapid.TaskRapidAppState
 import com.chandistudios.taskrapid.data.entity.Task
 import com.chandistudios.taskrapid.data.entity.TaskType
+import com.chandistudios.taskrapid.rememberTaskRapidAppState
+import com.chandistudios.taskrapid.ui.home.HomeViewModel
 import com.chandistudios.taskrapid.ui.login.Login
 import com.google.accompanist.insets.systemBarsPadding
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.random.Random
 
 @Composable
 fun AddTask(
-    onBackPress: () -> Unit
+    onBackPress: () -> Unit,
+    viewModel: AddTaskViewModel = viewModel(),
 ) {
+    val viewState by viewModel.state.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+
     Surface {
         val name = rememberSaveable { mutableStateOf("") }
         val description = rememberSaveable { mutableStateOf("") }
@@ -53,7 +62,7 @@ fun AddTask(
         ) {
             TopAppBar {
                 IconButton(
-                    onClick = onBackPress
+                    onClick = {}, // onBackPress
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -94,6 +103,11 @@ fun AddTask(
                         style = MaterialTheme.typography.body1,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
+                    // TODO (HW2): Add Icon selection menu
+//                    IconDropdown(
+//                        viewState = viewState,
+//                        icon = icon
+//                    )
                     Button(
                         onClick = { /*TODO*/ },
                         modifier = Modifier.fillMaxWidth()
@@ -144,25 +158,37 @@ fun AddTask(
                     modifier = Modifier.fillMaxWidth().padding(8.dp)
                 ) {
                     Text(
-                        text = "Task Stage: ",
+                        text = "Task Importance: ",
                         maxLines = 1,
                         style = MaterialTheme.typography.body1,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    /*TODO: Use a dropdown menu for Task Type [HW2]*/
-                    OutlinedTextField(
-                        value = taskType.value,
-                        onValueChange = { data -> taskType.value = data },
-                        placeholder = { Text(text = "Upcoming/Complete")},
-                        modifier = Modifier.fillMaxWidth(),
-                        maxLines = 2
+                    TypeDropdown(
+                        viewState = viewState,
+                        type = taskType
                     )
                 }
-                /*TODO: Add calendar event options [HW2]*/
-                /*TODO: Add reminder notification options [HW3]*/
+                /*TODO (HW2): Add calendar event options*/
+                /*TODO (HW3): Add reminder notification options*/
                 Spacer(modifier = Modifier.height(12.dp))
                 Button(
-                    onClick = onBackPress, //{ /*TODO: HW2*/ },
+                    onClick = {
+                        coroutineScope.launch {
+                            viewModel.saveTask(
+                                Task(
+                                    taskName = name.value,
+                                    taskDescription = description.value,
+                                    taskIcon = 0,
+                                    taskDate = Date().time.toString(), // date.value
+                                    taskTime = Date().time.toString(),
+                                    locationX = locationX.value,
+                                    locationY = locationY.value,
+                                    taskTypeId = getTaskTypeId(viewState.taskTypes, taskType.value)
+                                )
+                            )
+                        }
+                        onBackPress()
+                    },
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -170,10 +196,91 @@ fun AddTask(
                 ) {
                     Text("Save Task")
                 }
-
-//                Spacer(modifier = Modifier.width(8.dp))
             }
         }
     }
 }
 
+private fun getTaskTypeId(types: List<TaskType>, taskType: String): Long {
+    return types.first { type -> type.name == taskType }.id
+}
+
+@Composable
+private fun TypeDropdown(
+    viewState: AddTaskViewState,
+    type: MutableState<String>
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val ddIcon = if (expanded) {
+        Icons.Filled.ArrowDropUp
+    } else {
+        Icons.Filled.ArrowDropDown
+    }
+
+    Column() {
+        OutlinedTextField(
+            value = type.value,
+            onValueChange = { type.value = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = "Task Type") },
+            readOnly = true,
+            trailingIcon = {
+                Icon(
+                    imageVector = ddIcon,
+                    contentDescription = null,
+                    modifier = Modifier.clickable { expanded = !expanded }
+                )
+            }
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            viewState.taskTypes.forEach { dropDownOption ->
+                DropdownMenuItem(onClick = {
+                    type.value = dropDownOption.name
+                    expanded = false    // close list after selecting item
+                }) {
+                    Text(text = dropDownOption.name)
+                }
+            }
+        }
+    }
+}
+
+//@Composable
+//private fun IconDropdown(
+//    viewState: AddTaskViewState,
+//    icon: MutableState<ImageVector>
+//) {
+//    var expanded by remember { mutableStateOf(false) }
+//    val ddIcon = if (expanded) {
+//        Icons.Filled.ArrowDropUp // requires androidx.compose.material:material-icons-extended dependency
+//    } else {
+//        Icons.Filled.ArrowDropDown
+//    }
+//    Column {
+//        Icon(
+//            imageVector = icon.value,
+//            contentDescription = null,
+////            modifier = Modifier.fillMaxWidth(),
+//        )
+//        DropdownMenu(
+//            expanded = expanded,
+//            onDismissRequest = { expanded = false },
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            viewState.iconName.forEach { dropDownOption ->
+//                DropdownMenuItem(onClick = {
+//                    icon.value = dropDownOption.iconName
+//                    expanded = false    // close list after selecting item
+//                }) {
+//                    Text(text = dropDownOption.iconName)
+//                }
+//            }
+//        }
+//
+//    }
+//}
