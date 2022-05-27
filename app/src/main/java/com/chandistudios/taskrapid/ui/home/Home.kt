@@ -1,5 +1,6 @@
 package com.chandistudios.taskrapid.ui.home
 
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -47,7 +48,7 @@ fun HomeContent(
     selectedTaskType: TaskType,
     taskTypes: List<TaskType>,
     onTaskTypeSelected: (TaskType) -> Unit,
-    navController: NavController,
+    navController: NavController
 ) {
     Scaffold(
         modifier = Modifier.padding(bottom = 24.dp),
@@ -84,7 +85,8 @@ fun HomeContent(
 
             TypeTask (
                 taskTypeId = selectedTaskType.id,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                navController = navController
             )
         }
     }

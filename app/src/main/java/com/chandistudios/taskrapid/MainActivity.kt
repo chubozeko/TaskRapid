@@ -3,19 +3,15 @@ package com.chandistudios.taskrapid
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.work.impl.model.Preference
 import com.chandistudios.taskrapid.ui.TaskRapidApp
-import com.chandistudios.taskrapid.ui.login.Login
 import com.chandistudios.taskrapid.ui.theme.TaskRapidTheme
 import com.chandistudios.taskrapid.util.UserProfile
 

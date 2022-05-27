@@ -40,7 +40,9 @@ fun TaskRapidApp(
             )
         }
         composable(route = "home") {
-            Home(navController = appState.navController)
+            Home(
+                navController = appState.navController
+            )
         }
         composable(route = "addtask") {
             AddTask(onBackPress = appState::navigateBack)

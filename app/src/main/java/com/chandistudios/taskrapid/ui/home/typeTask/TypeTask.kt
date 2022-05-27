@@ -1,5 +1,7 @@
 package com.chandistudios.taskrapid.ui.home.typeTask
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +15,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.os.bundleOf
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.Navigator
+import com.chandistudios.taskrapid.Graph
 import com.chandistudios.taskrapid.data.entity.Task
 import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.data.room.TaskWithType
@@ -24,7 +30,8 @@ import java.util.*
 @Composable
 fun TypeTask (
     taskTypeId: Long,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     val viewModel: TypeTaskViewModel = viewModel(
         key = "type_list_$taskTypeId",
@@ -33,13 +40,14 @@ fun TypeTask (
     val viewState by viewModel.state.collectAsState()
 
     Column(modifier = modifier) {
-        TaskList(taskList = viewState.tasks)
+        TaskList(taskList = viewState.tasks, navController = navController)
     }
 }
 
 @Composable
 private fun TaskList(
     taskList: List<TaskWithType>,
+    navController: NavController
 ) {
     // LazyColumn -> loads items when they are needed (i.e. in view)
     LazyColumn(
@@ -50,7 +58,14 @@ private fun TaskList(
             TaskListItem(
                 task = item.task,
                 type = item.type,
-                onClick = { /**TODO: viewtask */ },
+                onClick = {
+                    val sharedPrefs: SharedPreferences = Graph.appContext.getSharedPreferences("APP_DATA", Context.MODE_PRIVATE)
+                    // save the selected task id to SharedPreferences
+                    var editor = sharedPrefs.edit()
+                    editor.putLong("selectedTask", item.task.taskId)
+                    editor.commit()
+                    navController.navigate("viewtask")
+                },
                 modifier = Modifier.fillParentMaxWidth(),
             )
         }
@@ -113,7 +128,7 @@ private fun TaskListItem(
         // date
         Text(
             text = when {
-                task.taskDate != null -> { task.taskDate } // .formatToString()
+                task.taskDate != null -> { task.taskDate }
                 else -> Date().formatToString()
             },
             maxLines = 1,

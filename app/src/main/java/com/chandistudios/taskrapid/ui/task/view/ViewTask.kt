@@ -1,5 +1,7 @@
 package com.chandistudios.taskrapid.ui.task.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.chandistudios.taskrapid.Graph
 import com.chandistudios.taskrapid.TaskRapidAppState
 import com.chandistudios.taskrapid.data.entity.Task
 import com.chandistudios.taskrapid.ui.login.Login
@@ -33,4 +36,8 @@ fun ViewTask(
     onBackPress: () -> Unit
 ) {
     // TODO (HW2)
+    val sharedPrefs: SharedPreferences = Graph.appContext.getSharedPreferences("APP_DATA", Context.MODE_PRIVATE)
+    val taskId = sharedPrefs.getLong("selectedTask", -1)
+
+    Text(text = "Task id: $taskId")
 }

@@ -1,6 +1,7 @@
 package com.chandistudios.taskrapid.ui.task.add
 
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
@@ -22,17 +23,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.chandistudios.taskrapid.Graph
 import com.chandistudios.taskrapid.TaskRapidAppState
 import com.chandistudios.taskrapid.data.entity.Task
 import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.rememberTaskRapidAppState
 import com.chandistudios.taskrapid.ui.home.HomeViewModel
-import com.chandistudios.taskrapid.ui.login.Login
+import com.chandistudios.taskrapid.ui.task.DatePicker
+import com.chandistudios.taskrapid.ui.task.TimePicker
+import com.chandistudios.taskrapid.ui.task.TypeDropdown
+import com.chandistudios.taskrapid.ui.task.IconDropdown
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import java.util.*
@@ -49,12 +55,17 @@ fun AddTask(
     Surface {
         val name = rememberSaveable { mutableStateOf("") }
         val description = rememberSaveable { mutableStateOf("") }
-        val icon = rememberSaveable { mutableStateOf("") }
+        val icon = rememberSaveable { mutableStateOf<Long>(0) }
         val date = rememberSaveable { mutableStateOf("") }
+//        var date by remember { mutableStateOf("") }
         val time = rememberSaveable { mutableStateOf("") }
+//        var time by remember { mutableStateOf("") }
         val locationX = rememberSaveable { mutableStateOf("") }
         val locationY = rememberSaveable { mutableStateOf("") }
         val taskType = rememberSaveable { mutableStateOf("") }
+
+        val context = LocalContext.current
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -95,7 +106,9 @@ fun AddTask(
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
                 ) {
                     Text(
                         text = "Select Task Icon: ",
@@ -103,38 +116,27 @@ fun AddTask(
                         style = MaterialTheme.typography.body1,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    // TODO (HW2): Add Icon selection menu
-//                    IconDropdown(
-//                        viewState = viewState,
-//                        icon = icon
-//                    )
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Icon")
-                        Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "Default")
-                    }
+                    IconDropdown(
+                        taskIcons = viewState.taskIcons,
+                        icon = icon
+                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Row (
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.padding(8.dp)) {
-                        Text(text = "Task Date")
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.padding(8.dp)) {
-                        Text(text = "Task Time")
-                    }
-                }
+                DatePicker(
+                    context = context,
+                    date = date
+                )
+                TimePicker(
+                    context = context,
+                    time = time
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
                 ) {
                     Text(
                         text = "Location: ",
@@ -155,7 +157,9 @@ fun AddTask(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
                 ) {
                     Text(
                         text = "Task Importance: ",
@@ -164,30 +168,36 @@ fun AddTask(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     TypeDropdown(
-                        viewState = viewState,
+                        taskTypes = viewState.taskTypes,
                         type = taskType
                     )
                 }
-                /*TODO (HW2): Add calendar event options*/
                 /*TODO (HW3): Add reminder notification options*/
                 Spacer(modifier = Modifier.height(12.dp))
                 Button(
                     onClick = {
-                        coroutineScope.launch {
-                            viewModel.saveTask(
-                                Task(
-                                    taskName = name.value,
-                                    taskDescription = description.value,
-                                    taskIcon = 0,
-                                    taskDate = Date().time.toString(), // date.value
-                                    taskTime = Date().time.toString(),
-                                    locationX = locationX.value,
-                                    locationY = locationY.value,
-                                    taskTypeId = getTaskTypeId(viewState.taskTypes, taskType.value)
+                        if (name.value != "") {
+                            coroutineScope.launch {
+                                viewModel.saveTask(
+                                    Task(
+                                        taskName = name.value,
+                                        taskDescription = description.value,
+                                        taskIcon = icon.value,
+                                        taskDate = date.value, // Date().time.toString()
+                                        taskTime = Date().time.toString(),
+                                        locationX = locationX.value,
+                                        locationY = locationY.value,
+                                        taskTypeId = getTaskTypeId(
+                                            viewState.taskTypes,
+                                            taskType.value
+                                        )
+                                    )
                                 )
-                            )
+                            }
+                            onBackPress()
+                        } else {
+                            Toast.makeText(context,"Task Name CANNOT be empty!", Toast.LENGTH_SHORT).show()
                         }
-                        onBackPress()
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
                     modifier = Modifier
@@ -205,82 +215,3 @@ private fun getTaskTypeId(types: List<TaskType>, taskType: String): Long {
     return types.first { type -> type.name == taskType }.id
 }
 
-@Composable
-private fun TypeDropdown(
-    viewState: AddTaskViewState,
-    type: MutableState<String>
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val ddIcon = if (expanded) {
-        Icons.Filled.ArrowDropUp
-    } else {
-        Icons.Filled.ArrowDropDown
-    }
-
-    Column() {
-        OutlinedTextField(
-            value = type.value,
-            onValueChange = { type.value = it },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = "Task Type") },
-            readOnly = true,
-            trailingIcon = {
-                Icon(
-                    imageVector = ddIcon,
-                    contentDescription = null,
-                    modifier = Modifier.clickable { expanded = !expanded }
-                )
-            }
-        )
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            viewState.taskTypes.forEach { dropDownOption ->
-                DropdownMenuItem(onClick = {
-                    type.value = dropDownOption.name
-                    expanded = false    // close list after selecting item
-                }) {
-                    Text(text = dropDownOption.name)
-                }
-            }
-        }
-    }
-}
-
-//@Composable
-//private fun IconDropdown(
-//    viewState: AddTaskViewState,
-//    icon: MutableState<ImageVector>
-//) {
-//    var expanded by remember { mutableStateOf(false) }
-//    val ddIcon = if (expanded) {
-//        Icons.Filled.ArrowDropUp // requires androidx.compose.material:material-icons-extended dependency
-//    } else {
-//        Icons.Filled.ArrowDropDown
-//    }
-//    Column {
-//        Icon(
-//            imageVector = icon.value,
-//            contentDescription = null,
-////            modifier = Modifier.fillMaxWidth(),
-//        )
-//        DropdownMenu(
-//            expanded = expanded,
-//            onDismissRequest = { expanded = false },
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            viewState.iconName.forEach { dropDownOption ->
-//                DropdownMenuItem(onClick = {
-//                    icon.value = dropDownOption.iconName
-//                    expanded = false    // close list after selecting item
-//                }) {
-//                    Text(text = dropDownOption.iconName)
-//                }
-//            }
-//        }
-//
-//    }
-//}
