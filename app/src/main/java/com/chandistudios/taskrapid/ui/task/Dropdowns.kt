@@ -65,7 +65,7 @@ fun IconDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val ddIcon = if (expanded) {
-        Icons.Filled.ArrowDropUp // requires androidx.compose.material:material-icons-extended dependency
+        Icons.Filled.ArrowDropUp
     } else {
         Icons.Filled.ArrowDropDown
     }
@@ -81,8 +81,7 @@ fun IconDropdown(
         ) {
             Icon(
                 imageVector = currentIcon,
-                contentDescription = null,
-//            modifier = Modifier.fillMaxWidth(),
+                contentDescription = null
             )
         }
 

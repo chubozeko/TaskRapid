@@ -3,6 +3,7 @@ package com.chandistudios.taskrapid.ui.home.typeTask
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chandistudios.taskrapid.Graph
+import com.chandistudios.taskrapid.data.entity.Task
 //import com.chandistudios.taskrapid.data.entity.Task
 //import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.data.repository.TaskRepository
@@ -20,6 +21,14 @@ class TypeTaskViewModel(
     val state: StateFlow<TypeTaskViewState>
         get() = _state
 
+    suspend fun updateTask(task: Task) { // : Unit
+        return taskRepository.updateTask(task)
+    }
+
+    suspend fun deleteTask(task: Task) { // : Unit
+        return taskRepository.deleteTask(task)
+    }
+
     init {
         viewModelScope.launch {
             taskRepository.getTasksWithType(taskTypeId).collect { list ->
@@ -34,51 +43,4 @@ class TypeTaskViewModel(
 data class TypeTaskViewState(
     val tasks: List<TaskWithType> = emptyList()
 )
-
-//fun InitTempTasks (): MutableList<Task> {
-//    val temp_tasks = mutableListOf<Task>()
-//    temp_tasks.add(
-//        Task(taskId = 1, taskName = "Buy Groceries", taskCompleted = false,
-//        taskType = "Upcoming", taskDate = Date(), creationTime = Date(),
-//        creatorId = Random(10).nextLong(),
-//        locationX = null, locationY = null, taskDescription = "", taskTime = null)
-//    )
-//    temp_tasks.add(
-//        Task(taskId = 1, taskName = "Flight", taskCompleted = true,
-//            taskType = "Completed", taskDate = Date("18/12/2021"), creationTime = Date(),
-//            creatorId = Random(10).nextLong(),
-//            locationX = null, locationY = null, taskDescription = "", taskTime = null)
-//    )
-//    temp_tasks.add(
-//        Task(taskId = 1, taskName = "Book Accommodation", taskCompleted = true,
-//            taskType = "Completed", taskDate = Date("05/09/2021"), creationTime = Date(),
-//            creatorId = Random(10).nextLong(),
-//            locationX = null, locationY = null, taskDescription = "", taskTime = null)
-//    )
-//    temp_tasks.add(
-//        Task(taskId = 1, taskName = "Lunch with Greg", taskCompleted = false,
-//            taskType = "Upcoming", taskDate = Date("23/02/2022"), creationTime = Date(),
-//            creatorId = Random(10).nextLong(),
-//            locationX = null, locationY = null, taskDescription = "", taskTime = null)
-//    )
-//    temp_tasks.add(
-//        Task(taskId = 1, taskName = "Rent Car", taskCompleted = true,
-//            taskType = "Completed", taskDate = Date("20/04/2022"), creationTime = Date(),
-//            creatorId = Random(10).nextLong(),
-//            locationX = null, locationY = null, taskDescription = "", taskTime = null)
-//    )
-//    temp_tasks.add(
-//        Task(taskId = 1, taskName = "Birthday Party", taskCompleted = false,
-//            taskType = "Upcoming", taskDate = Date("16/05/2022"), creationTime = Date(),
-//            creatorId = Random(10).nextLong(),
-//            locationX = null, locationY = null, taskDescription = "", taskTime = null)
-//    )
-//    temp_tasks.add(
-//        Task(taskId = 1, taskName = "Go to Gym", taskCompleted = false,
-//            taskType = "Upcoming", taskDate = Date(), creationTime = Date(),
-//            creatorId = Random(10).nextLong(),
-//            locationX = null, locationY = null, taskDescription = "", taskTime = null)
-//    )
-//    return temp_tasks
-//}
 

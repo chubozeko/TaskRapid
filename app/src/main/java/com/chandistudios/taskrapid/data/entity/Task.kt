@@ -29,7 +29,7 @@ data class Task (
     @ColumnInfo(name = "task_date") val taskDate: String?,
     @ColumnInfo(name = "task_time") val taskTime: String?,
     @ColumnInfo(name = "location_x") val locationX: String?,    //  TODO (HW4)
-    @ColumnInfo(name = "location_y") val locationY: String?,    //  TODO: (HW4)
+    @ColumnInfo(name = "location_y") val locationY: String?,    //  TODO (HW4)
     @ColumnInfo(name = "task_type_id") val taskTypeId: Long,
     @ColumnInfo(name = "task_completed") val taskCompleted: Int = 0,
     @ColumnInfo(name = "task_icon") val taskIcon: Long = 0

@@ -1,23 +1,25 @@
 package com.chandistudios.taskrapid.ui.task.edit
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chandistudios.taskrapid.Graph
 import com.chandistudios.taskrapid.data.entity.Task
+import com.chandistudios.taskrapid.data.entity.TaskIcon
 import com.chandistudios.taskrapid.data.entity.TaskType
+import com.chandistudios.taskrapid.data.repository.TaskIconRepository
 import com.chandistudios.taskrapid.data.repository.TaskRepository
 import com.chandistudios.taskrapid.data.repository.TaskTypeRepository
-import com.chandistudios.taskrapid.ui.task.add.AddTaskViewState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class EditTaskViewModel(
-    val taskRepository: TaskRepository = Graph.taskRepository,
-    val taskTypeRepository: TaskTypeRepository = Graph.taskTypeRepository
+    private val taskRepository: TaskRepository = Graph.taskRepository,
+    private val taskTypeRepository: TaskTypeRepository = Graph.taskTypeRepository,
+    private val taskIconRepository: TaskIconRepository = Graph.taskIconRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow(EditTaskViewState())
+    private val _state = MutableStateFlow(EditTaskViewState(selectedTask = null))
 
     val state: StateFlow<EditTaskViewState>
         get() = _state
@@ -26,16 +28,31 @@ class EditTaskViewModel(
         return taskRepository.updateTask(task)
     }
 
+    suspend fun deleteTask(task: Task) { // : Unit
+        return taskRepository.deleteTask(task)
+    }
+
     init {
         viewModelScope.launch {
-            // Load Task Types
-            taskTypeRepository.taskTypes().collect { types ->
-                _state.value = EditTaskViewState(taskTypes = types)
-            }
+            val sharedPrefs: SharedPreferences = Graph.appContext.getSharedPreferences("APP_DATA", Context.MODE_PRIVATE)
+            val taskId = sharedPrefs.getLong("selectedTask", -1)
+            combine(
+                taskRepository.getTaskWithId(taskId).onEach {  },
+                taskTypeRepository.taskTypes().onEach {  },
+            ) { selectedTask, types ->
+                EditTaskViewState(
+                    selectedTask = selectedTask,
+                    taskTypes = types,
+                    taskIcons = taskIconRepository.getIconList()
+                )
+            }.collect { _state.value = it }
+
         }
     }
 }
 
 data class EditTaskViewState(
-    val taskTypes: List<TaskType> = emptyList()
+    val selectedTask: Task?,
+    val taskTypes: List<TaskType> = emptyList(),
+    val taskIcons: List<TaskIcon> = emptyList()
 )

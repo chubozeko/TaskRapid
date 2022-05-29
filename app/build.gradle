@@ -85,4 +85,7 @@ dependencies {
 
     // Work Manager
     implementation "androidx.work:work-runtime-ktx:2.7.1"
+
+    // Swipe
+    implementation "me.saket.swipe:swipe:1.0.0"
 }

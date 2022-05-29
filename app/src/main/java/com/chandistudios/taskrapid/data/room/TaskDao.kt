@@ -9,7 +9,7 @@ abstract class TaskDao {
 
     // get task with taskId
     @Query(value = "SELECT * FROM tasks WHERE task_id = :taskId")
-    abstract fun getTaskWithId(taskId: Long): Task?
+    abstract fun getTaskWithId(taskId: Long): Flow<Task>
 
     // get task with taskName
     @Query(value = "SELECT * FROM tasks WHERE task_name = :name")

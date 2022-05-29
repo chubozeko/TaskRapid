@@ -17,7 +17,7 @@ class TaskRepository(
     /**
      * Retrieve the task using their taskId
      * */
-    fun getTaskWithId(taskId: Long) = taskDao.getTaskWithId(taskId)
+    fun getTaskWithId(taskId: Long): Flow<Task?> = taskDao.getTaskWithId(taskId)
 
     /**
      * Retrieve the tasks with a specific task type

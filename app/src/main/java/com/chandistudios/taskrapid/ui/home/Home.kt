@@ -1,6 +1,5 @@
 package com.chandistudios.taskrapid.ui.home
 
-import android.content.SharedPreferences
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -10,7 +9,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -164,7 +162,7 @@ private fun ChoiceChipContent(
             selected -> MaterialTheme.colors.primaryVariant.copy(alpha = 0.75f)
             else -> MaterialTheme.colors.onSurface
         },
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.small,
         modifier = modifier
     ) {
         Text(

@@ -1,6 +1,8 @@
 package com.chandistudios.taskrapid.ui
 
 import android.content.SharedPreferences
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,11 +14,10 @@ import com.chandistudios.taskrapid.ui.profile.EditProfile
 import com.chandistudios.taskrapid.ui.profile.ViewProfile
 import com.chandistudios.taskrapid.ui.signup.SignUp
 import com.chandistudios.taskrapid.ui.task.add.AddTask
-import com.chandistudios.taskrapid.ui.task.add.AddTaskViewModel
 import com.chandistudios.taskrapid.ui.task.edit.EditTask
-import com.chandistudios.taskrapid.ui.task.view.ViewTask
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskRapidApp(
     sharedPrefsCredentials: SharedPreferences,
@@ -48,12 +49,7 @@ fun TaskRapidApp(
             AddTask(onBackPress = appState::navigateBack)
         }
         composable(route = "edittask") {
-            // TODO: HW2
             EditTask(onBackPress = appState::navigateBack)
-        }
-        composable(route = "viewtask") {
-            // TODO: HW2
-            ViewTask(onBackPress = appState::navigateBack)
         }
         composable(route = "editprofile") {
             EditProfile(

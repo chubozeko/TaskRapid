@@ -1,6 +1,5 @@
 package com.chandistudios.taskrapid.ui.home
 
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chandistudios.taskrapid.Graph
@@ -46,13 +45,11 @@ class HomeViewModel(
 
     private fun loadTaskTypesFromDb() {
         val list = mutableListOf(
-//            TaskType(name="All Tasks"),   /* TODO (HW3) */
+            /* TODO (HW3): TaskType(name="All Tasks"), */
             TaskType(name="Crucial"),
             TaskType(name="High"),
             TaskType(name="Medium"),
             TaskType(name="Low"),
-//            TaskType(name="Upcoming"),
-//            TaskType(name="Complete")
         )
         viewModelScope.launch {
             list.forEach { type -> taskTypeRepository.addTaskType(type) }

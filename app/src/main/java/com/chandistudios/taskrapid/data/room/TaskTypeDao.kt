@@ -13,7 +13,7 @@ abstract class TaskTypeDao {
     abstract fun taskTypes(): Flow<List<TaskType>>
     // get task type with taskId
     @Query(value = "SELECT * FROM task_types WHERE id = :id")
-    abstract fun getTaskTypeWithId(id: Long): TaskType?
+    abstract fun getTaskTypeWithId(id: Long): Flow<TaskType?>
     // get task type with taskName
     @Query(value = "SELECT * FROM task_types WHERE name = :name")
     abstract suspend fun getTaskTypeWithName(name: String): TaskType?

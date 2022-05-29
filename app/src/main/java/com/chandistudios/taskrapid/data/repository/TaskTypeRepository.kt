@@ -17,7 +17,7 @@ class TaskTypeRepository(
     /**
      * Retrieves a task type with a specific id
      * */
-    fun getTaskTypeWithId(id: Long) = taskTypeDao.getTaskTypeWithId(id)
+    fun getTaskTypeWithId(id: Long): Flow<TaskType?> = taskTypeDao.getTaskTypeWithId(id)
 
     /**
      * Add a task type if it does not exist in the database

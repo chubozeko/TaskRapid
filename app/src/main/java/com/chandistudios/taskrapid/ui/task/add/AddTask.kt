@@ -1,8 +1,8 @@
 package com.chandistudios.taskrapid.ui.task.add
 
-import android.widget.DatePicker
+import android.os.Build
 import android.widget.Toast
-import androidx.compose.foundation.clickable
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.Icon
@@ -22,28 +21,16 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.chandistudios.taskrapid.Graph
-import com.chandistudios.taskrapid.TaskRapidAppState
 import com.chandistudios.taskrapid.data.entity.Task
 import com.chandistudios.taskrapid.data.entity.TaskType
-import com.chandistudios.taskrapid.rememberTaskRapidAppState
-import com.chandistudios.taskrapid.ui.home.HomeViewModel
-import com.chandistudios.taskrapid.ui.task.DatePicker
-import com.chandistudios.taskrapid.ui.task.TimePicker
-import com.chandistudios.taskrapid.ui.task.TypeDropdown
-import com.chandistudios.taskrapid.ui.task.IconDropdown
+import com.chandistudios.taskrapid.ui.task.*
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.random.Random
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddTask(
     onBackPress: () -> Unit,
@@ -57,9 +44,7 @@ fun AddTask(
         val description = rememberSaveable { mutableStateOf("") }
         val icon = rememberSaveable { mutableStateOf<Long>(0) }
         val date = rememberSaveable { mutableStateOf("") }
-//        var date by remember { mutableStateOf("") }
         val time = rememberSaveable { mutableStateOf("") }
-//        var time by remember { mutableStateOf("") }
         val locationX = rememberSaveable { mutableStateOf("") }
         val locationY = rememberSaveable { mutableStateOf("") }
         val taskType = rememberSaveable { mutableStateOf("") }
@@ -73,7 +58,7 @@ fun AddTask(
         ) {
             TopAppBar {
                 IconButton(
-                    onClick = {}, // onBackPress
+                    onClick = { onBackPress() },
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -144,7 +129,7 @@ fun AddTask(
                         style = MaterialTheme.typography.body1,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+                    OutlinedButton(onClick = { /*TODO (HW4) */ }, modifier = Modifier.fillMaxWidth()) {
                         Text(text = "Select location...")
                     }
                 }
@@ -183,8 +168,8 @@ fun AddTask(
                                         taskName = name.value,
                                         taskDescription = description.value,
                                         taskIcon = icon.value,
-                                        taskDate = date.value, // Date().time.toString()
-                                        taskTime = Date().time.toString(),
+                                        taskDate = date.value,
+                                        taskTime = time.value,
                                         locationX = locationX.value,
                                         locationY = locationY.value,
                                         taskTypeId = getTaskTypeId(
@@ -194,9 +179,10 @@ fun AddTask(
                                     )
                                 )
                             }
+                            Toast.makeText(context,"Task '${name.value}' has been Added!", Toast.LENGTH_SHORT).show()
                             onBackPress()
                         } else {
-                            Toast.makeText(context,"Task Name CANNOT be empty!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"Task Name CANNOT be empty!", Toast.LENGTH_LONG).show()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
