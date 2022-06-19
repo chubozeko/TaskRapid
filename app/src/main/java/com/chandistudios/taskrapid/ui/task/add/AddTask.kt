@@ -30,6 +30,7 @@ import com.chandistudios.taskrapid.data.entity.Task
 import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.ui.task.*
 import com.google.accompanist.insets.systemBarsPadding
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import java.util.TimeZone
 
@@ -37,6 +38,7 @@ import java.util.TimeZone
 @Composable
 fun AddTask(
     onBackPress: () -> Unit,
+    navController: NavController,
     viewModel: AddTaskViewModel = viewModel(),
 ) {
     val viewState by viewModel.state.collectAsState()
@@ -48,6 +50,8 @@ fun AddTask(
         val icon = rememberSaveable { mutableStateOf<Long>(0) }
         val date = rememberSaveable { mutableStateOf("") }
         val time = rememberSaveable { mutableStateOf("") }
+        val taskType = rememberSaveable { mutableStateOf("") }
+
         val locationX = rememberSaveable { mutableStateOf("") }
         val locationY = rememberSaveable { mutableStateOf("") }
         val taskType = rememberSaveable { mutableStateOf("") }
@@ -57,6 +61,11 @@ fun AddTask(
 
         val context = LocalContext.current
 
+        val latlng = navController
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<LatLng>("location_data")
+            ?.value
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -123,20 +132,33 @@ fun AddTask(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row (
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Text(
-                        text = "Location: ",
+                        text = "Task Location: ",
                         maxLines = 1,
                         style = MaterialTheme.typography.body1,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    OutlinedButton(onClick = { /*TODO (HW4) */ }, modifier = Modifier.fillMaxWidth()) {
-                        Text(text = "Select location...")
+//                    OutlinedTextField(
+//                        value = description.value,
+//                        onValueChange = { data -> description.value = data },
+//                        label = { Text(text = "Task Description")},
+//                        singleLine = false,
+//                        maxLines = 2
+//                    )
+//                    Spacer(modifier = Modifier.width(8.dp))
+                    if (latlng == null) {
+                        OutlinedButton(
+                            onClick = { navController.navigate("map") },
+                            modifier = Modifier.height(55.dp))
+                        {
+                            Text(text = "Select location...")
+                        }
+                    } else {
+                        Text(text = "Lat: ${latlng.latitude}; \nLong: ${latlng.longitude}")
                     }
                 }
 //                Text(
