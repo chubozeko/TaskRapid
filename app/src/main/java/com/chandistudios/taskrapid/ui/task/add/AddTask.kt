@@ -1,7 +1,6 @@
 package com.chandistudios.taskrapid.ui.task.add
 
 import android.os.Build
-import android.text.format.Time
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -26,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.chandistudios.taskrapid.data.entity.Task
 import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.ui.task.*
@@ -50,8 +50,6 @@ fun AddTask(
         val icon = rememberSaveable { mutableStateOf<Long>(0) }
         val date = rememberSaveable { mutableStateOf("") }
         val time = rememberSaveable { mutableStateOf("") }
-        val taskType = rememberSaveable { mutableStateOf("") }
-
         val locationX = rememberSaveable { mutableStateOf("") }
         val locationY = rememberSaveable { mutableStateOf("") }
         val taskType = rememberSaveable { mutableStateOf("") }
