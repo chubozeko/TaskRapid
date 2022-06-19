@@ -1,6 +1,7 @@
 package com.chandistudios.taskrapid.ui.task.edit
 
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -54,6 +55,9 @@ fun EditTask(
         var locationX: MutableState<String> = rememberSaveable { mutableStateOf("") }
         var locationY: MutableState<String> = rememberSaveable { mutableStateOf("") }
         var taskType: MutableState<String> = rememberSaveable { mutableStateOf("") }
+        var addNotiTime: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+        var notiTime = rememberSaveable { mutableStateOf("") }
+        var notiTimeValue = rememberSaveable { mutableStateOf<Long>(0) }
 
         val selectedTask: Task? = viewState.selectedTask
         if (selectedTask != null) {
@@ -69,6 +73,14 @@ fun EditTask(
                 if (type.id == selectedTask.taskTypeId)
                     taskType = rememberSaveable { mutableStateOf(type.name) }
             }
+            addNotiTime = rememberSaveable { mutableStateOf( when(selectedTask.taskNoti) {
+                    1 -> true
+                    else -> false
+                } )
+            }
+            if (selectedTask.notificationTime != null)
+                notiTime = rememberSaveable { mutableStateOf(selectedTask.notificationTime) }
+
         }
 
         Column(
@@ -177,11 +189,38 @@ fun EditTask(
                         type = taskType
                     )
                 }
+                Spacer(modifier = Modifier.height(12.dp))
                 /*TODO (HW3): Add reminder notification options*/
+                if (time.value != "") {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Checkbox(
+                            checked = addNotiTime.value,
+                            onCheckedChange = { data -> addNotiTime.value = data }
+                        )
+                        Text(text = "Add reminder notification")
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                if (addNotiTime.value) {
+                    NotificationDropdown(
+                        notiTimes = viewState.notiTimes,
+                        notiTimeValue = notiTimeValue
+                    )
+                }
                 Spacer(modifier = Modifier.height(12.dp))
                 Button(
                     onClick = {
                         if (name.value != "") {
+                            Log.i("EditTask",
+                                "Notification time: " + parseNotificationTime(time.value, notiTimeValue.value) +
+                                        " ; Task Time: " + time.value.toTime().time.toTimeString() +
+                                        " ; timezone offset: " + getGMTOffset())
                             coroutineScope.launch {
                                 viewModel.updateTask(
                                     Task(
@@ -196,7 +235,13 @@ fun EditTask(
                                         taskTypeId = getTaskTypeId(
                                             viewState.taskTypes,
                                             taskType.value
-                                        )
+                                        ),
+                                        taskNoti = when(addNotiTime.value) {
+                                            true -> 1
+                                            else -> 0
+                                        },
+                                        notificationTime = parseNotificationTime(time.value, notiTimeValue.value),
+                                        notiTimeValue = notiTimeValue.value
                                     )
                                 )
                             }

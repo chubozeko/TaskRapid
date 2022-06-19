@@ -3,6 +3,7 @@ package com.chandistudios.taskrapid
 import android.content.Context
 import androidx.room.Room
 import com.chandistudios.taskrapid.data.repository.TaskIconRepository
+import com.chandistudios.taskrapid.data.repository.TaskNotiTimeRepository
 import com.chandistudios.taskrapid.data.repository.TaskRepository
 import com.chandistudios.taskrapid.data.repository.TaskTypeRepository
 import com.chandistudios.taskrapid.data.room.TaskRapidDatabase
@@ -30,6 +31,8 @@ object Graph {
     }
 
     val taskIconRepository by lazy { TaskIconRepository() }
+
+    val taskNotiTimeRepository by lazy { TaskNotiTimeRepository() }
 
     fun provide(context: Context) {
         appContext = context

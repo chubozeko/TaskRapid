@@ -32,5 +32,8 @@ data class Task (
     @ColumnInfo(name = "location_y") val locationY: String?,    //  TODO (HW4)
     @ColumnInfo(name = "task_type_id") val taskTypeId: Long,
     @ColumnInfo(name = "task_completed") val taskCompleted: Int = 0,
-    @ColumnInfo(name = "task_icon") val taskIcon: Long = 0
+    @ColumnInfo(name = "task_icon") val taskIcon: Long = 0,
+    @ColumnInfo(name = "task_noti") val taskNoti: Int = 0,
+    @ColumnInfo(name = "task_noti_time") val notificationTime: String?,
+    @ColumnInfo(name = "task_noti_time_value") val notiTimeValue: Long?,
 )

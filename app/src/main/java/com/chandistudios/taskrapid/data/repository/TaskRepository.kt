@@ -15,6 +15,11 @@ class TaskRepository(
     fun tasks(): Flow<List<Task>> = taskDao.tasks()
 
     /**
+     * Retrieve all incomplete tasks
+     * */
+    fun getIncompleteTasks(): Flow<List<Task>> = taskDao.getIncompleteTasks()
+
+    /**
      * Retrieve the task using their taskId
      * */
     fun getTaskWithId(taskId: Long): Flow<Task?> = taskDao.getTaskWithId(taskId)
@@ -25,6 +30,19 @@ class TaskRepository(
      * */
     fun getTasksWithType(taskTypeId: Long): Flow<List<TaskWithType>> {
         return taskDao.getTasksWithType(taskTypeId)
+//        if (taskTypeId.equals(5)) {
+//            return taskDao.getAllTasks()
+//        } else {
+//            return taskDao.getTasksWithType(taskTypeId)
+//        }
+    }
+
+    /**
+     * Retrieve all the tasks
+     * @return a flow containing the list of tasks of all types
+     * */
+    fun getAllTasks(): Flow<List<TaskWithType>> {
+        return taskDao.getAllTasks()
     }
 
     /**

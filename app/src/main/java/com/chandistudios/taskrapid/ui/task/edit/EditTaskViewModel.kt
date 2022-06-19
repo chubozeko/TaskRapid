@@ -5,10 +5,12 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chandistudios.taskrapid.Graph
+import com.chandistudios.taskrapid.data.entity.NotiTime
 import com.chandistudios.taskrapid.data.entity.Task
 import com.chandistudios.taskrapid.data.entity.TaskIcon
 import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.data.repository.TaskIconRepository
+import com.chandistudios.taskrapid.data.repository.TaskNotiTimeRepository
 import com.chandistudios.taskrapid.data.repository.TaskRepository
 import com.chandistudios.taskrapid.data.repository.TaskTypeRepository
 import kotlinx.coroutines.flow.*
@@ -17,7 +19,8 @@ import kotlinx.coroutines.launch
 class EditTaskViewModel(
     private val taskRepository: TaskRepository = Graph.taskRepository,
     private val taskTypeRepository: TaskTypeRepository = Graph.taskTypeRepository,
-    private val taskIconRepository: TaskIconRepository = Graph.taskIconRepository
+    private val taskIconRepository: TaskIconRepository = Graph.taskIconRepository,
+    private val taskNotiTimeRepository: TaskNotiTimeRepository = Graph.taskNotiTimeRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(EditTaskViewState(selectedTask = null))
 
@@ -43,7 +46,8 @@ class EditTaskViewModel(
                 EditTaskViewState(
                     selectedTask = selectedTask,
                     taskTypes = types,
-                    taskIcons = taskIconRepository.getIconList()
+                    taskIcons = taskIconRepository.getIconList(),
+                    notiTimes = taskNotiTimeRepository.getNotiTimeList()
                 )
             }.collect { _state.value = it }
 
@@ -54,5 +58,6 @@ class EditTaskViewModel(
 data class EditTaskViewState(
     val selectedTask: Task?,
     val taskTypes: List<TaskType> = emptyList(),
-    val taskIcons: List<TaskIcon> = emptyList()
+    val taskIcons: List<TaskIcon> = emptyList(),
+    val notiTimes: List<NotiTime> = emptyList()
 )

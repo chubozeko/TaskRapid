@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Build
 import android.text.format.DateFormat
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -16,7 +17,9 @@ import androidx.compose.ui.unit.dp
 import java.sql.Time
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -33,11 +36,9 @@ fun DatePicker(
 
     val datePickerDialog = DatePickerDialog(
         context, { d, year, month, day ->
-            var dd = ""
-            var mm = ""
-            if (day < 10) dd = "0$day" else dd = "$day"
+            val dd = day.parseToTwoDigits()
             val mon = month-1
-            if (mon < 10) mm = "0$mon" else mm = "$mon"
+            val mm = mon.parseToTwoDigits()
 
             date.value = "$dd/$mm/$year"
         }, year, month, day
@@ -76,10 +77,8 @@ fun TimePicker(
 
     val timePickerDialog = TimePickerDialog(
         context, { d, hour, min ->
-            var hh = ""
-            var mm = ""
-            if (hour < 10) hh = "0$hour" else hh = "$hour"
-            if (min < 10) mm = "0$min" else mm = "$min"
+            val hh = hour.parseToTwoDigits()
+            val mm = min.parseToTwoDigits()
 
             time.value = "$hh:$mm:00"
         }, hour, minute, DateFormat.is24HourFormat(context)
@@ -114,6 +113,56 @@ fun String.toDate(): Date {
 fun String.toTime(): Time {
     var formattedTime = LocalTime.parse(this, DateTimeFormatter.ofPattern("HH:mm:ss"))
     return Time(formattedTime.hour, formattedTime.minute, formattedTime.second)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun String.toDateTime(): Long {
+    var formattedTime = LocalDateTime.parse(this, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+    return formattedTime.toEpochSecond(ZoneOffset.UTC)
+}
+
+fun getDateTimeDifference(date1: Long, date2: Long): Long {
+    return date1 - date2
+}
+
+fun getTimeDifference(time1: Time, time2: Time): Long {
+    return time1.time - time2.time
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun parseNotificationTime(taskTime: String, notiTimeValue: Long): String {
+    var nTime: String
+
+    if (notiTimeValue < 10) {
+        nTime = (taskTime.toTime().time - "00:0${notiTimeValue}:00".toTime().time).toTimeString()
+    } else if (notiTimeValue >= 60) {
+        nTime = (taskTime.toTime().time - "0${notiTimeValue/60}:00:00".toTime().time).toTimeString()
+    } else {
+        nTime = (taskTime.toTime().time - "00:${notiTimeValue}:00".toTime().time).toTimeString()
+    }
+
+    val gmtOffset = getGMTOffset()
+    var offsetHrs = nTime.toTime().hours - gmtOffset.subSequence(1, 3).toString().toInt()
+    if (offsetHrs < 0) offsetHrs += 24
+    var offsetMins = nTime.toTime().minutes - gmtOffset.subSequence(3, 5).toString().toInt()
+    if (offsetMins < 0) offsetMins += 60
+    return "${offsetHrs.parseToTwoDigits()}:${offsetMins.parseToTwoDigits()}:00".toTime().time.toTimeString()
+}
+
+fun getGMTOffset(): String {
+    val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault())
+    val currentLocalTime: Date = calendar.getTime()
+    return SimpleDateFormat("Z", Locale.getDefault()).format(currentLocalTime)
+}
+
+fun Int.parseToTwoDigits(): String {
+    if (this < 10) {
+        return "0${this}"
+    } else if (this < 99) {
+        return "${this}"
+    } else {
+        return "ERROR: num is more than 2 digits"
+    }
 }
 
 fun Date.formatToString(): String {

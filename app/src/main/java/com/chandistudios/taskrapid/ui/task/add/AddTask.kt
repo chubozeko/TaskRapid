@@ -1,6 +1,8 @@
 package com.chandistudios.taskrapid.ui.task.add
 
 import android.os.Build
+import android.text.format.Time
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
@@ -29,6 +31,7 @@ import com.chandistudios.taskrapid.data.entity.TaskType
 import com.chandistudios.taskrapid.ui.task.*
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
+import java.util.TimeZone
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -48,6 +51,9 @@ fun AddTask(
         val locationX = rememberSaveable { mutableStateOf("") }
         val locationY = rememberSaveable { mutableStateOf("") }
         val taskType = rememberSaveable { mutableStateOf("") }
+        val addNotiTime = rememberSaveable { mutableStateOf(false) }
+        val notiTime = rememberSaveable { mutableStateOf("") }
+        val notiTimeValue = rememberSaveable { mutableStateOf<Long>(0) }
 
         val context = LocalContext.current
 
@@ -157,11 +163,39 @@ fun AddTask(
                         type = taskType
                     )
                 }
+                Spacer(modifier = Modifier.height(12.dp))
                 /*TODO (HW3): Add reminder notification options*/
+                if (time.value != "") {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Checkbox(
+                            checked = addNotiTime.value,
+                            onCheckedChange = { data -> addNotiTime.value = data }
+                        )
+                        Text(text = "Add reminder notification")
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                if (addNotiTime.value) {
+                    NotificationDropdown(
+                        notiTimes = viewState.notiTimes,
+                        notiTimeValue = notiTimeValue
+                    )
+                }
                 Spacer(modifier = Modifier.height(12.dp))
                 Button(
                     onClick = {
-                        if (name.value != "") {
+                        if (name.value != "" && taskType.value != "") {
+                            Log.i("AddTask",
+                                "Notification time: " + parseNotificationTime(time.value, notiTimeValue.value) +
+                            " ; Task Time: " + time.value.toTime().time.toTimeString() +
+                            " ; timezone offset: " + getGMTOffset())
+
                             coroutineScope.launch {
                                 viewModel.saveTask(
                                     Task(
@@ -175,14 +209,20 @@ fun AddTask(
                                         taskTypeId = getTaskTypeId(
                                             viewState.taskTypes,
                                             taskType.value
-                                        )
+                                        ),
+                                        taskNoti = when(addNotiTime.value) {
+                                            true -> 1
+                                            else -> 0
+                                        },
+                                        notificationTime = parseNotificationTime(time.value, notiTimeValue.value),
+                                        notiTimeValue = notiTimeValue.value
                                     )
                                 )
                             }
                             Toast.makeText(context,"Task '${name.value}' has been Added!", Toast.LENGTH_SHORT).show()
                             onBackPress()
                         } else {
-                            Toast.makeText(context,"Task Name CANNOT be empty!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context,"Task Name and Type CANNOT be empty!", Toast.LENGTH_LONG).show()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),

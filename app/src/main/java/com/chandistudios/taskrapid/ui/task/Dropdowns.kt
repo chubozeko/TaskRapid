@@ -1,5 +1,6 @@
 package com.chandistudios.taskrapid.ui.task
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -10,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.chandistudios.taskrapid.data.entity.NotiTime
 import com.chandistudios.taskrapid.data.entity.TaskIcon
 import com.chandistudios.taskrapid.data.entity.TaskType
 
@@ -110,3 +112,47 @@ fun IconDropdown(
     }
 }
 
+@Composable
+fun NotificationDropdown(
+    notiTimes: List<NotiTime>,
+    notiTimeValue: MutableState<Long>,
+//    taskNotiTime: MutableState<String>
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val ddIcon = if (expanded) {
+        Icons.Filled.ArrowDropUp
+    } else {
+        Icons.Filled.ArrowDropDown
+    }
+    var currentTime = "Select notification time..."
+    notiTimes.forEach { nt ->
+        if (nt.time == notiTimeValue.value)
+            currentTime = nt.name
+    }
+    Column {
+        OutlinedButton(
+            onClick = { expanded = !expanded },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = currentTime)
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            notiTimes.forEach { dropDownOption ->
+                DropdownMenuItem(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    onClick = {
+                        notiTimeValue.value = dropDownOption.time
+                        expanded = false    // close list after selecting item
+                    }) {
+                    Text(text = dropDownOption.name)
+                }
+            }
+        }
+
+    }
+}

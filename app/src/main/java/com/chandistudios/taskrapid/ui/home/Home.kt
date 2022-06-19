@@ -1,5 +1,8 @@
 package com.chandistudios.taskrapid.ui.home
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,6 +23,7 @@ import com.chandistudios.taskrapid.R
 import com.chandistudios.taskrapid.ui.home.typeTask.TypeTask
 import com.google.accompanist.insets.systemBarsPadding
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Home(
     viewModel: HomeViewModel = viewModel(),
@@ -39,6 +43,14 @@ fun Home(
             )
         }
     }
+
+//    /* TODO (HW3): get the duration of the task with the soonest notification (smallest time until noti) */
+//    if (!viewState.pendingTasks.isNullOrEmpty()) {
+//        val earliestTask = viewModel.getTaskWithEarliestNotification(viewState.pendingTasks)
+//
+//        Log.i("Notifications", "Earliest Task: ${earliestTask?.taskName}")
+//        setOneTimeNotificationWithDuration(viewModel.getNotificationDelay(earliestTask), earliestTask)
+//    }
 }
 
 @Composable
@@ -135,13 +147,17 @@ private fun TaskTypeTabs(
         taskTypes.forEachIndexed { index, type ->
             Tab(
                 selected = index == selectedIndex,
-                onClick = { onTaskTypeSelected(type) }
+                onClick = {
+                    onTaskTypeSelected(type)
+                    Log.i("MainActivity", "Selected type: ${type.name}, index ${type.id}")
+                }
             ) {
                 ChoiceChipContent(
                     text = type.name,
                     selected = index == selectedIndex,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 16.dp)
                 )
+
             }
         }
     }

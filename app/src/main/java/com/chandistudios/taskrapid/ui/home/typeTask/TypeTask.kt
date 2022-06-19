@@ -15,7 +15,9 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -124,6 +126,9 @@ private fun TaskListItem(
                             taskTime = task.taskTime,
                             locationX = task.locationX,
                             locationY = task.locationY,
+                            taskNoti = task.taskNoti,
+                            notificationTime = task.notificationTime,
+                            notiTimeValue = task.notiTimeValue,
                         )
                     )
                     Toast.makeText(Graph.appContext,
@@ -160,6 +165,9 @@ private fun TaskListItem(
                             taskTime = task.taskTime,
                             locationX = task.locationX,
                             locationY = task.locationY,
+                            taskNoti = task.taskNoti,
+                            notificationTime = task.notificationTime,
+                            notiTimeValue = task.notiTimeValue,
                         )
                     )
                     Toast.makeText(Graph.appContext,
@@ -234,7 +242,7 @@ private fun TaskListItem(
             modifier = modifier.fillMaxWidth()
                 .clickable { onClick() }
         ) {
-            val (divider, taskName, taskType, completedIcon, icon, date, tTime) = createRefs()
+            val (divider, taskName, taskType, completedIcon, icon, date, tTime, notiIcon) = createRefs()
             Divider(
                 Modifier.constrainAs(divider) {
                     top.linkTo(parent.top)
@@ -294,7 +302,7 @@ private fun TaskListItem(
                     .padding(4.dp)
                     .constrainAs(tTime) {
                         bottom.linkTo(parent.bottom, 4.dp)
-                        end.linkTo(completedIcon.start, 16.dp)
+                        end.linkTo(notiIcon.start, 16.dp)
                     }
             )
             // date
@@ -310,7 +318,21 @@ private fun TaskListItem(
                     .padding(4.dp)
                     .constrainAs(date) {
                         bottom.linkTo(tTime.top, 2.dp)
-                        end.linkTo(completedIcon.start, 16.dp)
+                        end.linkTo(notiIcon.start, 16.dp)
+                    }
+            )
+            // notification icon
+            Icon(
+                imageVector = Icons.Filled.NotificationsActive,
+                contentDescription = null,
+                modifier = Modifier
+                    .alpha( task.taskNoti.toFloat() )
+                    .size( when(task.taskNoti) { 1 -> 32.dp else -> 0.dp } )
+                    .padding( when(task.taskNoti) { 1 -> 4.dp else -> 0.dp } )
+                    .constrainAs(notiIcon) {
+                        top.linkTo(parent.top, 4.dp)
+                        bottom.linkTo(parent.bottom, 4.dp)
+                        end.linkTo(completedIcon.start, 8.dp)
                     }
             )
             // task completed icon
@@ -323,7 +345,7 @@ private fun TaskListItem(
                     .constrainAs(completedIcon) {
                         top.linkTo(parent.top, 4.dp)
                         bottom.linkTo(parent.bottom, 4.dp)
-                        end.linkTo(parent.end, 16.dp)
+                        end.linkTo(parent.end, 8.dp)
                     }
             )
         }

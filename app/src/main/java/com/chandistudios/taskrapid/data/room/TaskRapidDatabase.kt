@@ -7,7 +7,7 @@ import com.chandistudios.taskrapid.data.entity.TaskType
 
 @Database(
     entities = [Task::class, TaskType::class],
-    version = 5,
+    version = 7,
     exportSchema = false
 )
 

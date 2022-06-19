@@ -19,6 +19,14 @@ abstract class TaskDao {
     @Query(value = "SELECT * FROM tasks LIMIT 15")
     abstract fun tasks(): Flow<List<Task>>
 
+    // get all incomplete tasks
+    @Query(value = "SELECT * FROM tasks WHERE task_completed = 0")
+    abstract fun getIncompleteTasks(): Flow<List<Task>>
+
+    // get all tasks
+    @Query(value = "SELECT * FROM tasks LIMIT 15")
+    abstract fun getAllTasks(): Flow<List<TaskWithType>>
+
     // get all tasks with taskType
     @Query("""
         SELECT tasks.* 

@@ -36,11 +36,17 @@ class TypeTaskViewModel(
                     tasks = list
                 )
             }
+            taskRepository.getAllTasks().collect { list ->
+                _state.value = TypeTaskViewState(
+                    allTasks = list
+                )
+            }
         }
     }
 }
 
 data class TypeTaskViewState(
-    val tasks: List<TaskWithType> = emptyList()
+    val tasks: List<TaskWithType> = emptyList(),
+    val allTasks: List<TaskWithType> = emptyList()
 )
 
